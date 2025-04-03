@@ -33,3 +33,5 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Execute with Maven
+      run: sudo kill -9 `sudo lsof -t -i:8083` & sudo java -jar /home/ubuntu/actions-runner/_work/transaction/transaction/target/transaction-0.0.1-SNAPSHOT.jar &
