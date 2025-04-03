@@ -34,7 +34,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Stop existing application (if running)
-      run: sudo fuser -k 8083/tcp || true
+      run: sudo fuser -k 80/tcp || true
     - name: Start application
       run: |
         nohup java -jar /home/ubuntu/actions-runner/_work/transaction/transaction/target/transaction-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
