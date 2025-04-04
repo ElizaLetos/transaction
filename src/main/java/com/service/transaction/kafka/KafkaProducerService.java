@@ -23,7 +23,7 @@ public class KafkaProducerService {
             TransactionEvent transactionEvent = new TransactionEvent(transaction, action);
             String transactionJson = objectMapper.writeValueAsString(transactionEvent);
             kafkaTemplate.send(TRANSACTIONS_TOPIC, transactionJson);
-            System.out.println("✅ Sent transaction to MSK: " + transactionJson);
+            System.out.println("Sent transaction to MSK: " + transactionJson);
         } catch (Exception e) {
             e.printStackTrace();
         }
