@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transaction")
@@ -76,5 +77,19 @@ public class TransactionController {
         return service.deleteTransaction(id, jwt.getSubject())
                 .then(Mono.just(ResponseEntity.noContent().build()))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/report/monthly/expenses")
+    public Mono<ResponseEntity<List<Map<String, Object>>>> getMonthlyExpenses(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        return service.getMonthlyTransactionReport(TypeOfTransaction.EXPENSE, userId)
+                .map(ResponseEntity::ok);
+    }
+
+    @GetMapping("/report/monthly/incomes")
+    public Mono<ResponseEntity<List<Map<String, Object>>>> getMonthlyIncomes(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        return service.getMonthlyTransactionReport(TypeOfTransaction.INCOME, userId)
+                .map(ResponseEntity::ok);
     }
 }

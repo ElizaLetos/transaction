@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.*;
+
 @Service
 public class TransactionService {
 
@@ -81,5 +85,29 @@ public class TransactionService {
                 .filter(transaction -> transaction.getTypeOfTransaction().equals(typeOfTransaction))
                 .map(Transaction::getAmount)
                 .reduce(0.0, Double::sum);
+    }
+
+    public Mono<List<Map<String, Object>>> getMonthlyTransactionReport(TypeOfTransaction type, String userId) {
+        return repository.findByUserId(userId)
+                .filter(transaction -> transaction.getTypeOfTransaction().equals(type))
+                .groupBy(transaction -> {
+                    return transaction.getDate().getMonth().getDisplayName(
+                            TextStyle.FULL, Locale.ENGLISH);
+                })
+                .flatMap(group -> group.map(Transaction::getAmount)
+                        .reduce(0.0, Double::sum)
+                        .map(total -> {
+                            Map<String, Object> report = new HashMap<>();
+                            report.put("month", group.key());
+                            report.put("total", total);
+                            return report;
+                        }))
+                .collectList()
+                .map(list -> {
+                    // Sort by month order
+                    list.sort(Comparator.comparingInt(dto ->
+                            Month.valueOf(((String) dto.get("month")).toUpperCase()).getValue()));
+                    return list;
+                });
     }
 }
