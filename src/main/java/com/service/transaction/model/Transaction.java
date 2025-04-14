@@ -1,13 +1,11 @@
 package com.service.transaction.model;
 
-import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Data
 @Table("transaction")
 public class Transaction {
     @Id
